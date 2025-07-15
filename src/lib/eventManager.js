@@ -1,5 +1,65 @@
-export function setupEventListeners(root) {}
+const handlers = new Map();
 
-export function addEvent(element, eventType, handler) {}
+const eventTypes = new Set();
 
-export function removeEvent(element, eventType, handler) {}
+const setupRoots = new WeakSet();
+
+export function setupEventListeners(root) {
+  if (setupRoots.has(root)) return;
+
+  eventTypes.forEach((eventType) => {
+    root.addEventListener(eventType, handleEvent);
+  });
+
+  setupRoots.add(root);
+}
+
+function handleEvent(event) {
+  const target = event.target;
+  const elementHandlers = handlers.get(target);
+
+  if (elementHandlers && elementHandlers[event.type]) {
+    elementHandlers[event.type].forEach((handler) => handler(event));
+  }
+}
+
+export function addEvent(element, eventType, handler) {
+  if (!handlers.has(element)) {
+    handlers.set(element, {});
+  }
+
+  const elementHandlers = handlers.get(element);
+  if (!elementHandlers[eventType]) {
+    elementHandlers[eventType] = [];
+  }
+
+  elementHandlers[eventType].push(handler);
+
+  if (!eventTypes.has(eventType)) {
+    eventTypes.add(eventType);
+
+    const root = findRoot(element);
+    if (root && setupRoots.has(root)) {
+      root.addEventListener(eventType, handleEvent);
+    }
+  }
+}
+
+function findRoot(element) {
+  let current = element;
+  while (current.parentElement) {
+    current = current.parentElement;
+  }
+  return current;
+}
+
+export function removeEvent(element, eventType, handler) {
+  const elementHandlers = handlers.get(element);
+
+  if (elementHandlers && elementHandlers[eventType]) {
+    const index = elementHandlers[eventType].indexOf(handler);
+    if (index > -1) {
+      elementHandlers[eventType].splice(index, 1);
+    }
+  }
+}
