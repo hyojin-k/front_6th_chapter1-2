@@ -15,10 +15,11 @@ export function normalizeVNode(vNode) {
     return normalizeVNode(componentResult);
   }
 
-  if (typeof vNode === "object") {
+  if (typeof vNode === "object" && vNode !== null) {
     const normalizedChildren = [];
 
-    for (const child of vNode.children) {
+    const children = vNode.children || [];
+    for (const child of children) {
       const normalizedChild = normalizeVNode(child);
       if (normalizedChild !== "") {
         normalizedChildren.push(normalizedChild);

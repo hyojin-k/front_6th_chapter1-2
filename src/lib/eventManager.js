@@ -33,7 +33,10 @@ export function addEvent(element, eventType, handler) {
     elementHandlers[eventType] = [];
   }
 
-  elementHandlers[eventType].push(handler);
+  // 중복 등록 방지
+  if (!elementHandlers[eventType].includes(handler)) {
+    elementHandlers[eventType].push(handler);
+  }
 
   if (!eventTypes.has(eventType)) {
     eventTypes.add(eventType);

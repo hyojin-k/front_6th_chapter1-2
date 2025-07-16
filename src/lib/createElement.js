@@ -1,4 +1,4 @@
-// import { addEvent } from "./eventManager";
+import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
   if (vNode === undefined || vNode === null || typeof vNode === "boolean") {
@@ -22,11 +22,12 @@ export function createElement(vNode) {
   }
 
   // 중첩 처리
-  if (typeof vNode === "object") {
+  if (typeof vNode === "object" && vNode !== null) {
     const element = document.createElement(vNode.type);
     updateAttributes(element, vNode.props);
 
-    for (const child of vNode.children) {
+    const children = vNode.children || [];
+    for (const child of children) {
       const childElement = createElement(child);
       if (childElement) {
         element.appendChild(childElement);
@@ -35,14 +36,30 @@ export function createElement(vNode) {
 
     return element;
   }
+
+  return null;
 }
 
 function updateAttributes($el, props) {
   if (!props) return;
 
   for (const key in props) {
-    if (key === "className") {
+    if (key.startsWith("on") && typeof props[key] === "function") {
+      addEvent($el, key.toLowerCase().slice(2), props[key]);
+    } else if (key === "className") {
       $el.className = props[key];
+    } else if (key === "disabled") {
+      $el.disabled = props[key];
+    } else if (key === "selected") {
+      if (props[key]) {
+        $el.selected = true;
+      } else {
+        $el.selected = false;
+      }
+    } else if (key === "value") {
+      $el.value = props[key];
+    } else if (key.startsWith("data-")) {
+      $el.setAttribute(key, props[key]);
     } else {
       $el.setAttribute(key, props[key]);
     }
