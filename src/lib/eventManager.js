@@ -15,11 +15,14 @@ export function setupEventListeners(root) {
 }
 
 function handleEvent(event) {
-  const target = event.target;
-  const elementHandlers = handlers.get(target);
-
-  if (elementHandlers && elementHandlers[event.type]) {
-    elementHandlers[event.type].forEach((handler) => handler(event));
+  let target = event.target;
+  while (target) {
+    const elementHandlers = handlers.get(target);
+    if (elementHandlers && elementHandlers[event.type]) {
+      elementHandlers[event.type].forEach((handler) => handler(event));
+      break;
+    }
+    target = target.parentElement;
   }
 }
 
