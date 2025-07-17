@@ -43,29 +43,33 @@ export function createElement(vNode) {
 function updateAttributes($el, props) {
   if (!props) return;
 
+  setAttributes($el, props);
+}
+
+export function setAttributes(el, props) {
   for (const key in props) {
     if (key.startsWith("on") && typeof props[key] === "function") {
-      addEvent($el, key.toLowerCase().slice(2), props[key]);
+      addEvent(el, key.toLowerCase().slice(2), props[key]);
     } else if (key === "className") {
-      $el.className = props[key];
+      el.className = props[key];
     } else if (key === "disabled") {
-      $el.disabled = props[key];
+      el.disabled = props[key];
     } else if (key === "checked") {
-      $el.checked = props[key];
+      el.checked = props[key];
     } else if (key === "selected") {
       if (props[key]) {
-        $el.selected = true;
+        el.selected = true;
       } else {
-        $el.selected = false;
+        el.selected = false;
       }
     } else if (key === "readOnly") {
-      $el.readOnly = props[key];
+      el.readOnly = props[key];
     } else if (key === "value") {
-      $el.value = props[key];
+      el.value = props[key];
     } else if (key.startsWith("data-")) {
-      $el.setAttribute(key, props[key]);
+      el.setAttribute(key, props[key]);
     } else {
-      $el.setAttribute(key, props[key]);
+      el.setAttribute(key, props[key]);
     }
   }
 }

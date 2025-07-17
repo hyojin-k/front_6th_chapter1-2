@@ -1,5 +1,6 @@
-import { addEvent, removeEvent } from "./eventManager";
+import { removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
+import { setAttributes } from "./createElement.js";
 
 function updateAttributes(target, originNewProps, originOldProps) {
   const newProps = originNewProps || {};
@@ -11,31 +12,7 @@ function updateAttributes(target, originNewProps, originOldProps) {
     }
   }
 
-  for (const key in newProps) {
-    if (key.startsWith("on") && typeof newProps[key] === "function") {
-      addEvent(target, key.toLowerCase().slice(2), newProps[key]);
-    } else if (key === "className") {
-      target.className = newProps[key];
-    } else if (key === "disabled") {
-      target.disabled = newProps[key];
-    } else if (key === "checked") {
-      target.checked = newProps[key];
-    } else if (key === "selected") {
-      if (newProps[key]) {
-        target.selected = true;
-      } else {
-        target.selected = false;
-      }
-    } else if (key === "readOnly") {
-      target.readOnly = newProps[key];
-    } else if (key === "value") {
-      target.value = newProps[key];
-    } else if (key.startsWith("data-")) {
-      target.setAttribute(key, newProps[key]);
-    } else {
-      target.setAttribute(key, newProps[key]);
-    }
-  }
+  setAttributes(target, newProps);
 
   for (const key in oldProps) {
     if (!(key in newProps) && !key.startsWith("on")) {
