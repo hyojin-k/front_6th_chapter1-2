@@ -50,6 +50,8 @@ function updateAttributes($el, props) {
       $el.className = props[key];
     } else if (key === "disabled") {
       $el.disabled = props[key];
+    } else if (key === "checked") {
+      $el.checked = props[key];
     } else if (key === "selected") {
       if (props[key]) {
         $el.selected = true;

@@ -18,6 +18,8 @@ function updateAttributes(target, originNewProps, originOldProps) {
       target.className = newProps[key];
     } else if (key === "disabled") {
       target.disabled = newProps[key];
+    } else if (key === "checked") {
+      target.checked = newProps[key];
     } else if (key === "selected") {
       if (newProps[key]) {
         target.selected = true;
