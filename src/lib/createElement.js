@@ -58,6 +58,8 @@ function updateAttributes($el, props) {
       } else {
         $el.selected = false;
       }
+    } else if (key === "readOnly") {
+      $el.readOnly = props[key];
     } else if (key === "value") {
       $el.value = props[key];
     } else if (key.startsWith("data-")) {

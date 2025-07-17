@@ -26,6 +26,8 @@ function updateAttributes(target, originNewProps, originOldProps) {
       } else {
         target.selected = false;
       }
+    } else if (key === "readOnly") {
+      target.readOnly = newProps[key];
     } else if (key === "value") {
       target.value = newProps[key];
     } else if (key.startsWith("data-")) {
@@ -38,6 +40,13 @@ function updateAttributes(target, originNewProps, originOldProps) {
   for (const key in oldProps) {
     if (!(key in newProps) && !key.startsWith("on")) {
       target.removeAttribute(key);
+
+      if (key === "className") {
+        target.className = "";
+        target.removeAttribute("class");
+      } else {
+        target.removeAttribute(key);
+      }
     }
   }
 }
@@ -96,10 +105,15 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     // 자식 요소 diff 알고리즘 적용
     const newChildren = newNode.children || [];
     const oldChildren = oldNode.children || [];
-    const maxLength = Math.max(newChildren.length, oldChildren.length);
 
-    for (let i = 0; i < maxLength; i++) {
+    // 순서대로 추가
+    for (let i = 0; i < newChildren.length; i++) {
       updateElement(currentElement, newChildren[i], oldChildren[i], i);
+    }
+
+    // 역순으로 제거
+    for (let i = oldChildren.length - 1; i >= newChildren.length; i--) {
+      updateElement(currentElement, null, oldChildren[i], i);
     }
   }
 }
