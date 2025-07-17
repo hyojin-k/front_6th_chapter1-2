@@ -52,9 +52,19 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     return;
   }
 
+  if (!oldNode) {
+    const newElement = createElement(newNode);
+    if (newElement) {
+      parentElement.appendChild(newElement);
+    }
+    return;
+  }
+
   if (typeof newNode === "string" || typeof newNode === "number") {
     if (currentElement && currentElement.nodeType === Node.TEXT_NODE) {
-      currentElement.textContent = newNode.toString();
+      if (currentElement.textContent !== newNode.toString()) {
+        currentElement.textContent = newNode.toString();
+      }
     } else {
       const textNode = document.createTextNode(newNode.toString());
       if (currentElement) {
@@ -83,18 +93,13 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
 
     updateAttributes(currentElement, newNode.props, oldNode?.props);
 
-    // 자식 요소 업데이트
+    // 자식 요소 diff 알고리즘 적용
     const newChildren = newNode.children || [];
+    const oldChildren = oldNode.children || [];
+    const maxLength = Math.max(newChildren.length, oldChildren.length);
 
-    while (currentElement.firstChild) {
-      currentElement.removeChild(currentElement.firstChild);
-    }
-
-    for (const child of newChildren) {
-      const childElement = createElement(child);
-      if (childElement) {
-        currentElement.appendChild(childElement);
-      }
+    for (let i = 0; i < maxLength; i++) {
+      updateElement(currentElement, newChildren[i], oldChildren[i], i);
     }
   }
 }
